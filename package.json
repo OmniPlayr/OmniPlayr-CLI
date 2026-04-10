@@ -4,12 +4,13 @@
   "description": "Easily install and download plugins for your OmniPlayr server",
   "main": "index.js",
   "bin": {
-    "omniplayr-cli": "./bin/omniplayr.js"
+    "omniplayr": "./bin/omniplayr.js"
   },
   "scripts": {
-    "build:win": "node bin/build-sea.js win",
-    "build:linux": "node bin/build-sea.js linux",
-    "build:mac": "node bin/build-sea.js mac"
+    "build:win": "node bin/build-sea.js win x64",
+    "build:linux": "node bin/build-sea.js linux x64",
+    "build:mac-arm64": "node bin/build-sea.js mac arm64",
+    "build:mac-x64": "node bin/build-sea.js mac x64"
   },
   "repository": {
     "type": "git",
@@ -24,16 +25,10 @@
   },
   "homepage": "https://github.com/OmniPlayr/OmniPlayr-CLI#readme",
   "dependencies": {
-    "commander": "^14.0.3",
-    "into-stream": "^6.0.0"
+    "commander": "^14.0.3"
   },
   "devDependencies": {
-    "@yao-pkg/pkg": "^6.10.1",
-    "caxa": "^3.0.1"
-  },
-  "overrides": {
-    "@yao-pkg/pkg": {
-      "into-stream": "6.0.0"
-    }
+    "esbuild": "^0.27.3",
+    "postject": "^1.0.0-alpha.6"
   }
 }

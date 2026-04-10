@@ -7,20 +7,57 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            script: build:linux
+            artifact: omniplayr-linux
+          - os: windows-latest
+            script: build:win
+            artifact: omniplayr-win.exe
+          - os: macos-latest
+            script: build:mac-arm64
+            artifact: omniplayr-macos-arm64
+          - os: macos-13
+            script: build:mac-x64
+            artifact: omniplayr-macos-x64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+
+      - run: npm run ${{ matrix.script }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist/${{ matrix.artifact }}
+
+  release:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           registry-url: https://registry.npmjs.org
 
       - run: npm ci
 
-      - run: npm run build:linux
-      - run: npm run build:win
-      - run: npm run build:mac
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
 
       - name: Publish to npm
         run: npm publish --access public
