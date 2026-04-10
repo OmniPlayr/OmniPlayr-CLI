@@ -19,9 +19,6 @@ jobs:
           - os: macos-latest
             script: build:mac-arm64
             artifact: omniplayr-macos-arm64
-          - os: macos-12
-            script: build:mac-x64
-            artifact: omniplayr-macos-x64
 
     runs-on: ${{ matrix.os }}
 
