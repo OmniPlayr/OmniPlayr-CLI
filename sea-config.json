@@ -1,0 +1,4 @@
+{
+  "main": "bin/omniplayr.js",
+  "output": "dist/omniplayr.blob"
+}
