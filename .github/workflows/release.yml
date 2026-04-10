@@ -76,7 +76,6 @@ jobs:
           VERSION=${GITHUB_REF_NAME#v}
 
           SHA_ARM=$(shasum -a 256 dist/omniplayr-macos-arm64 | awk '{print $1}')
-          SHA_X64=$(shasum -a 256 dist/omniplayr-macos-x64 | awk '{print $1}')
           SHA_LINUX=$(shasum -a 256 dist/omniplayr-linux | awk '{print $1}')
 
           git clone https://x-access-token:${HOMEBREW_TAP_TOKEN}@github.com/OmniPlayr/homebrew-tap.git
@@ -87,7 +86,6 @@ jobs:
           sed -i "s|releases/download/v[^/]*/omniplayr-macos-x64|releases/download/v$VERSION/omniplayr-macos-x64|" Formula/omniplayr.rb
           sed -i "s|releases/download/v[^/]*/omniplayr-linux|releases/download/v$VERSION/omniplayr-linux|" Formula/omniplayr.rb
           sed -i "/omniplayr-macos-arm64/{n;s/sha256 \".*\"/sha256 \"$SHA_ARM\"/}" Formula/omniplayr.rb
-          sed -i "/omniplayr-macos-x64/{n;s/sha256 \".*\"/sha256 \"$SHA_X64\"/}" Formula/omniplayr.rb
           sed -i "/omniplayr-linux/{n;s/sha256 \".*\"/sha256 \"$SHA_LINUX\"/}" Formula/omniplayr.rb
 
           git config user.email "info@wokki20.nl"
