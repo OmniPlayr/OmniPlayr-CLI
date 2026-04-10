@@ -1,6 +1,6 @@
 {
   "name": "@omniplayr/cli",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Easily install and download plugins for your OmniPlayr server",
   "main": "index.js",
   "bin": {
