@@ -116,7 +116,9 @@ jobs:
                 "hash": "$SHA_WIN"
               }
             },
-            "bin": "omniplayr-win.exe"
+            "bin": [
+              ["omniplayr-win.exe", "omniplayr"]
+            ]
           }
           EOF
 
