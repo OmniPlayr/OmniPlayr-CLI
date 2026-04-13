@@ -23,4 +23,25 @@ program
     require('../src/commands/list')();
   });
 
+program
+  .command('login')
+  .description('Log in to the OmniPlayr registry')
+  .action(() => {
+    require('../src/commands/login')();
+  });
+
+program
+  .command('publish')
+  .description('Publish a plugin to the OmniPlayr registry')
+  .action(() => {
+    require('../src/commands/publish')();
+  });
+
+program
+  .command('logout')
+  .description('Log out of the OmniPlayr registry')
+  .action(() => {
+    require('../src/commands/logout')();
+  });
+
 program.parse();

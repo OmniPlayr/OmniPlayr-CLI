@@ -1,6 +1,6 @@
 {
   "name": "@omniplayr/cli",
-  "version": "0.0.11",
+  "version": "0.1.0",
   "description": "Easily install and download plugins for your OmniPlayr server",
   "main": "index.js",
   "bin": {
@@ -25,7 +25,11 @@
   },
   "homepage": "https://github.com/OmniPlayr/OmniPlayr-CLI#readme",
   "dependencies": {
-    "commander": "^14.0.3"
+    "commander": "^14.0.3",
+    "tar": "^7.4.3",
+    "form-data": "^4.0.1",
+    "node-fetch": "^2.7.0",
+    "ignore": "^5.3.2"
   },
   "devDependencies": {
     "esbuild": "^0.27.3",
