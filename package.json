@@ -1,6 +1,6 @@
 {
   "name": "@omniplayr/cli",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Easily install and download plugins for your OmniPlayr server",
   "main": "index.js",
   "bin": {
@@ -9,6 +9,7 @@
   "scripts": {
     "build:win": "node bin/build-sea.js win x64",
     "build:linux": "node bin/build-sea.js linux x64",
+    "build:linux-arm64": "node bin/build-sea.js linux arm64",
     "build:mac-arm64": "node bin/build-sea.js mac arm64",
     "build:mac-x64": "node bin/build-sea.js mac x64"
   },
