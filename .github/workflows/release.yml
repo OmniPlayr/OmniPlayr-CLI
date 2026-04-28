@@ -15,7 +15,7 @@ jobs:
         include:
           - os: ubuntu-latest
             script: build:linux
-            artifact: omniplayr-linux
+            artifact: omniplayr-linux-x64
           - os: ubuntu-24.04-arm
             script: build:linux-arm64
             artifact: omniplayr-linux-arm64
@@ -39,14 +39,20 @@ jobs:
 
       - run: npm run ${{ matrix.script }}
 
+      - name: Normalize output name
+        run: |
+          mkdir -p dist-out
+          cp dist/* dist-out/${{ matrix.artifact }}
+
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
-          path: dist/${{ matrix.artifact }}
+          path: dist-out/${{ matrix.artifact }}
 
   release:
     needs: build
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -62,6 +68,13 @@ jobs:
           path: dist
           merge-multiple: true
 
+      - name: Validate artifacts
+        run: |
+          test -f dist/omniplayr-linux-x64
+          test -f dist/omniplayr-linux-arm64
+          test -f dist/omniplayr-win.exe
+          test -f dist/omniplayr-macos-arm64
+
       - name: Publish to npm
         run: npm publish --access public
         env:
@@ -76,10 +89,12 @@ jobs:
         env:
           HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
         run: |
+          set -e
+
           VERSION=${GITHUB_REF_NAME#v}
 
-          SHA_ARM=$(shasum -a 256 dist/omniplayr-macos-arm64 | awk '{print $1}')
-          SHA_LINUX=$(shasum -a 256 dist/omniplayr-linux | awk '{print $1}')
+          SHA_MAC_ARM=$(shasum -a 256 dist/omniplayr-macos-arm64 | awk '{print $1}')
+          SHA_LINUX_X64=$(shasum -a 256 dist/omniplayr-linux-x64 | awk '{print $1}')
           SHA_LINUX_ARM=$(shasum -a 256 dist/omniplayr-linux-arm64 | awk '{print $1}')
 
           git clone https://x-access-token:${HOMEBREW_TAP_TOKEN}@github.com/OmniPlayr/homebrew-tap.git
@@ -88,13 +103,12 @@ jobs:
           sed -i "s/version \".*\"/version \"$VERSION\"/" Formula/omniplayr.rb
 
           sed -i "s|releases/download/v[^/]*/omniplayr-macos-arm64|releases/download/v$VERSION/omniplayr-macos-arm64|" Formula/omniplayr.rb
-          sed -i "s|releases/download/v[^/]*/omniplayr-macos-x64|releases/download/v$VERSION/omniplayr-macos-x64|" Formula/omniplayr.rb
-          sed -i "s|releases/download/v[^/]*/omniplayr-linux|releases/download/v$VERSION/omniplayr-linux|" Formula/omniplayr.rb
+          sed -i "s|releases/download/v[^/]*/omniplayr-linux-x64|releases/download/v$VERSION/omniplayr-linux-x64|" Formula/omniplayr.rb
           sed -i "s|releases/download/v[^/]*/omniplayr-linux-arm64|releases/download/v$VERSION/omniplayr-linux-arm64|" Formula/omniplayr.rb
 
-          sed -i "/omniplayr-macos-arm64/{n;s/sha256 \".*\"/sha256 \"$SHA_ARM\"/}" Formula/omniplayr.rb
+          sed -i "/omniplayr-macos-arm64/{n;s/sha256 \".*\"/sha256 \"$SHA_MAC_ARM\"/}" Formula/omniplayr.rb
+          sed -i "/omniplayr-linux-x64/{n;s/sha256 \".*\"/sha256 \"$SHA_LINUX_X64\"/}" Formula/omniplayr.rb
           sed -i "/omniplayr-linux-arm64/{n;s/sha256 \".*\"/sha256 \"$SHA_LINUX_ARM\"/}" Formula/omniplayr.rb
-          sed -i "/omniplayr-linux/{n;s/sha256 \".*\"/sha256 \"$SHA_LINUX\"/}" Formula/omniplayr.rb
 
           git config user.email "info@wokki20.nl"
           git config user.name "OmniPlayr CI"
@@ -102,10 +116,13 @@ jobs:
           git add Formula/omniplayr.rb
           git commit -m "Update omniplayr to v$VERSION"
           git push
+
       - name: Update Scoop manifest
         env:
           SCOOP_BUCKET_TOKEN: ${{ secrets.SCOOP_BUCKET_TOKEN }}
         run: |
+          set -e
+
           VERSION=${GITHUB_REF_NAME#v}
           SHA_WIN=$(shasum -a 256 dist/omniplayr-win.exe | awk '{print $1}')
 
